@@ -66,6 +66,8 @@
           :columns="columns"
           row-key="name"
           selection="multiple"
+          :selected-rows-label="getSelectedString"
+          :selected.sync="selected_layers_array"
         >
           <!-- 表格头检索插槽 -->
           <template v-slot:top-right>
@@ -169,24 +171,17 @@
 
 <script>
 import { initmap } from "../api/map.js";
+import { options_type_select } from "../service/request";
 export default {
   data() {
     return {
       map: "",
       seamless: false,
       expand_selector: true,
-      region_select_val: "",
+      region_select_val: "0",
       layer_search_value: "",
       edit_window: false,
       region_select_options: [
-        {
-          label: "蒙德",
-          value: "md"
-        },
-        {
-          label: "璃月",
-          value: "ly"
-        }
       ],
       itemtype_select_val: "",
       itemtypen_select_options: [
@@ -240,7 +235,9 @@ export default {
           layer_addtime: "2021年6月30日15:38:03"
         }
       ],
-      edit_datalist: {}
+      edit_datalist: {},
+      selected_layers_array: [],
+      selectors_options:[],
     };
   },
   methods: {
@@ -255,10 +252,24 @@ export default {
         .on("click", function() {
           that.seamless = true;
         });
+    },
+    //获取选择的表格点位
+    getSelectedString() {
+      console.log(this.selected_layers_array);
     }
   },
   mounted() {
     let that = this;
+    options_type_select().then(function(res) {
+      console.log(res.data.data);
+      that.selectors_options=res.data.data;
+      for (let i in res.data.data) {
+        that.region_select_options.push({
+          label: res.data.data[i].name,
+          value: i
+        });
+      }
+    });
     this.map = initmap(this.map);
   }
 };

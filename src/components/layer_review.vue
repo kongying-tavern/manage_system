@@ -5,7 +5,7 @@
       <div class="col-11">
         <h5 class="page_title">点位审核页面</h5>
       </div>
-      <div class="row col-11 justify-between" style="height:500px">
+      <div class="row col-11 justify-between" style="height:500px;">
         <div class="col-4">
           <q-card class="my-card">
             <q-card-section>
@@ -36,10 +36,10 @@
                   />
                 </q-card-section>
                 <q-card-section>
-                  <p>按地区选择：</p>
+                  <p>按类型选择：</p>
                   <q-option-group
                     v-model="itemtype_select_val"
-                    :options="itemtypen_select_options"
+                    :options="itemtype_select_options"
                     color="primary"
                     inline
                   />
@@ -47,17 +47,20 @@
                 <q-card-section>
                   <p>按物品选择：</p>
                   <q-option-group
-                    v-model="itemtype_select_val"
-                    :options="itemtypen_select_options"
+                    v-model="item_select_val"
+                    :options="item_select_options"
                     color="primary"
                     inline
                   />
                 </q-card-section>
+                <q-inner-loading :showing="selector_loading">
+                  <q-spinner-gears size="50px" color="primary" />
+                </q-inner-loading>
               </div>
             </q-slide-transition>
           </q-card>
         </div>
-        <div class="col-7" id="map"></div>
+        <div class="col-7 map_div" id="map"></div>
       </div>
       <div class="col-11" style="margin-top:30px">
         <q-table
@@ -148,21 +151,52 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <!-- 点位审核弹窗 -->
     <q-dialog v-model="seamless" seamless position="right">
-      <q-card style="width: 350px">
-        <q-linear-progress :value="0.6" color="pink" />
-
-        <q-card-section class="row items-center no-wrap">
-          <div>
-            <div class="text-weight-bold">The Walker</div>
-            <div class="text-grey">Fitz & The Tantrums</div>
-          </div>
-
-          <q-space />
-
-          <q-btn flat round icon="play_arrow" />
-          <q-btn flat round icon="pause" />
-          <q-btn flat round icon="close" v-close-popup />
+      <q-card>
+        <q-card-section>
+          <q-btn icon="close" flat round dense v-close-popup />
+          <q-list bordered separator style="width:500px">
+            <q-item>
+              <q-item-section>
+                点位名称
+              </q-item-section>
+              <q-item-section>
+                点位名称
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                点位描述
+              </q-item-section>
+              <q-item-section>
+                点位描述
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                点位图片
+              </q-item-section>
+              <q-item-section>
+                <q-img
+                  :src="'https://placeimg.com/500/300/nature'"
+                  spinner-color="white"
+                  placeholder-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWBAMAAADOL2zRAAAAG1BMVEXMzMyWlpaqqqq3t7fFxcW+vr6xsbGjo6OcnJyLKnDGAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABAElEQVRoge3SMW+DMBiE4YsxJqMJtHOTITPeOsLQnaodGImEUMZEkZhRUqn92f0MaTubtfeMh/QGHANEREREREREREREtIJJ0xbH299kp8l8FaGtLdTQ19HjofxZlJ0m1+eBKZcikd9PWtXC5DoDotRO04B9YOvFIXmXLy2jEbiqE6Df7DTleA5socLqvEFVxtJyrpZFWz/pHM2CVte0lS8g2eDe6prOyqPglhzROL+Xye4tmT4WvRcQ2/m81p+/rdguOi8Hc5L/8Qk4vhZzy08DduGt9eVQyP2qoTM1zi0/uf4hvBWf5c77e69Gf798y08L7j0RERERERERERH9P99ZpSVRivB/rgAAAABJRU5ErkJggg=="
+                  style="height: 140px; max-width: 150px;margin:0 auto 15px"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+        <q-card-section>
+          <q-btn color="primary" label="审核通过" />
+          <q-btn
+            color="red"
+            text-color="white"
+            label="退回"
+            @click="seamless = false"
+            style="margin-left:30px"
+          />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -176,24 +210,17 @@ export default {
   data() {
     return {
       map: "",
+      selector_loading: true,
       seamless: false,
       expand_selector: true,
-      region_select_val: "0",
       layer_search_value: "",
       edit_window: false,
-      region_select_options: [
-      ],
+      region_select_val: "",
+      region_select_options: [],
       itemtype_select_val: "",
-      itemtypen_select_options: [
-        {
-          label: "蒙德",
-          value: "md"
-        },
-        {
-          label: "璃月",
-          value: "ly"
-        }
-      ],
+      itemtype_select_options: [],
+      item_select_val: "",
+      item_select_options: [],
       columns: [
         {
           name: "layer_id",
@@ -232,12 +259,13 @@ export default {
           layer_region: "蒙德",
           layer_type: "特产",
           layer_itemname: "蒲公英籽",
-          layer_addtime: "2021年6月30日15:38:03"
+          layer_addtime: "2021年6月30日15:38:03",
+          coordinate: [-26.95145308349826, 44.659423828125]
         }
       ],
       edit_datalist: {},
       selected_layers_array: [],
-      selectors_options:[],
+      selectors_options: []
     };
   },
   methods: {
@@ -250,7 +278,7 @@ export default {
       L.marker([-26.95145308349826, 44.659423828125])
         .addTo(this.map)
         .on("click", function() {
-          that.seamless = true;
+          that.seamless = !that.seamless;
         });
     },
     //获取选择的表格点位
@@ -258,19 +286,46 @@ export default {
       console.log(this.selected_layers_array);
     }
   },
+  watch: {
+    region_select_val: function(val) {
+      this.itemtype_select_options = [];
+      this.itemtype_select_val = "";
+      for (let i in this.selectors_options[val].types) {
+        this.itemtype_select_options.push({
+          label: this.selectors_options[val].types[i].name,
+          value: Number(i)
+        });
+      }
+    },
+    itemtype_select_val: function(val) {
+      this.item_select_options = [];
+      if (this.itemtype_select_val != "") {
+        for (let i in this.selectors_options[this.region_select_val].types[val]
+          .items) {
+          this.item_select_options.push({
+            label: this.selectors_options[this.region_select_val].types[val]
+              .items[i].name,
+            value: Number(i)
+          });
+        }
+      }
+    }
+  },
   mounted() {
     let that = this;
     options_type_select().then(function(res) {
       console.log(res.data.data);
-      that.selectors_options=res.data.data;
+      that.selectors_options = res.data.data;
       for (let i in res.data.data) {
         that.region_select_options.push({
           label: res.data.data[i].name,
-          value: i
+          value: Number(i)
         });
       }
+      that.selector_loading = false;
     });
     this.map = initmap(this.map);
+    this.test();
   }
 };
 </script>
@@ -291,7 +346,24 @@ p {
   margin: 0;
   text-align: center;
 }
+.card_main {
+  max-height: 400px;
+  overflow: hidden scroll;
+}
+.card_main::-webkit-scrollbar {
+  width: 5px;
+  background: none;
+}
+.card_main::-webkit-scrollbar-thumb {
+  background: #1976d2;
+  border-radius: 5px;
+}
 .card_main .q-card__section--vert {
   padding: 10px 16px;
+}
+.exam_window_title {
+  margin: 0 auto;
+  font-weight: bold;
+  text-align: center;
 }
 </style>

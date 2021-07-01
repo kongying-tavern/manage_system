@@ -35,10 +35,10 @@
                 />
               </q-card-section>
               <q-card-section>
-                <p>按地区选择：</p>
+                <p>按类型选择：</p>
                 <q-option-group
                   v-model="itemtype_select_val"
-                  :options="itemtypen_select_options"
+                  :options="itemtype_select_options"
                   color="primary"
                   inline
                 />
@@ -46,12 +46,15 @@
               <q-card-section>
                 <p>按物品选择：</p>
                 <q-option-group
-                  v-model="itemtype_select_val"
-                  :options="itemtypen_select_options"
+                  v-model="item_select_val"
+                  :options="item_select_options"
                   color="primary"
                   inline
                 />
               </q-card-section>
+              <q-inner-loading :showing="selector_loading">
+                <q-spinner-gears size="50px" color="primary" />
+              </q-inner-loading>
             </div>
           </q-slide-transition>
         </q-card>
@@ -157,34 +160,20 @@
 </template>
 
 <script>
+import { options_type_select } from "../service/request";
 export default {
   data() {
     return {
+      selector_loading: true,
       expand_selector: true,
-      region_select_val: "",
       layer_search_value: "",
       edit_window: false,
-      region_select_options: [
-        {
-          label: "蒙德",
-          value: "md"
-        },
-        {
-          label: "璃月",
-          value: "ly"
-        }
-      ],
+      region_select_val: "",
+      region_select_options: [],
       itemtype_select_val: "",
-      itemtypen_select_options: [
-        {
-          label: "蒙德",
-          value: "md"
-        },
-        {
-          label: "璃月",
-          value: "ly"
-        }
-      ],
+      itemtype_select_options: [],
+      item_select_val: "",
+      item_select_options: [],
       columns: [
         {
           name: "layer_id",
@@ -228,6 +217,45 @@ export default {
       console.log(row);
       this.edit_window = true;
     }
+  },
+  watch: {
+    region_select_val: function(val) {
+      this.itemtype_select_options = [];
+      this.itemtype_select_val = "";
+      for (let i in this.selectors_options[val].types) {
+        this.itemtype_select_options.push({
+          label: this.selectors_options[val].types[i].name,
+          value: Number(i)
+        });
+      }
+    },
+    itemtype_select_val: function(val) {
+      this.item_select_options = [];
+      if (this.itemtype_select_val != "") {
+        for (let i in this.selectors_options[this.region_select_val].types[val]
+          .items) {
+          this.item_select_options.push({
+            label: this.selectors_options[this.region_select_val].types[val]
+              .items[i].name,
+            value: Number(i)
+          });
+        }
+      }
+    }
+  },
+  mounted() {
+    let that = this;
+    options_type_select().then(function(res) {
+      console.log(res.data.data);
+      that.selectors_options = res.data.data;
+      for (let i in res.data.data) {
+        that.region_select_options.push({
+          label: res.data.data[i].name,
+          value: Number(i)
+        });
+      }
+      that.selector_loading = false;
+    });
   }
 };
 </script>

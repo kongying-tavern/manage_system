@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "quasar dev",
     "build": "quasar build",
-    "commit": "npx git-cz"
+    "commit": "npx git-cz",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@quasar/app": "^2.0.0",
     "commitizen": "^4.2.4",
+    "conventional-changelog-cli": "^2.1.1",
     "cz-conventional-changelog": "^3.3.0"
   },
   "config": {

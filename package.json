@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "dev": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "commit": "npx git-cz"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
@@ -22,7 +23,14 @@
     "vue-cookies": "^1.7.4"
   },
   "devDependencies": {
-    "@quasar/app": "^2.0.0"
+    "@quasar/app": "^2.0.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "browserslist": [
     "last 10 Chrome versions",

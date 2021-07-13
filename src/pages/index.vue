@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="left = !left" />
         <q-toolbar-title>
-          原神地图后台管理系统
+          原神点位管理系统
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -26,14 +26,14 @@
             点位审核
           </q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/user_manage">
+        <!-- <q-item clickable v-ripple to="/user_manage">
           <q-item-section avatar>
             <q-icon name="mdi-account-edit" />
           </q-item-section>
           <q-item-section>
             用户管理
           </q-item-section>
-        </q-item>
+        </q-item> -->
       </q-list>
     </q-drawer>
     <q-page-container>

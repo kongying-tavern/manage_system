@@ -290,11 +290,13 @@ export default {
     region_select_val: function(val) {
       this.itemtype_select_options = [];
       this.itemtype_select_val = "";
-      for (let i in this.selectors_options[val].types) {
-        this.itemtype_select_options.push({
-          label: this.selectors_options[val].types[i].name,
-          value: Number(i)
-        });
+      if (val != -1) {
+        for (let i in this.selectors_options[val].types) {
+          this.itemtype_select_options.push({
+            label: this.selectors_options[val].types[i].name,
+            value: Number(i)
+          });
+        }
       }
     },
     itemtype_select_val: function(val) {
@@ -322,6 +324,10 @@ export default {
           value: Number(i)
         });
       }
+      that.region_select_options.push({
+        label: "全部",
+        value: -1
+      });
       that.selector_loading = false;
     });
     this.map = initmap(this.map);

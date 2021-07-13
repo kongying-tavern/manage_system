@@ -1,6 +1,10 @@
 
 const routes = [
   {
+    path:'/login',
+    component: () => import('pages/login.vue'),
+  },
+  {
     path: '/',
     redirect: 'layer_edit'
   },
@@ -18,10 +22,10 @@ const routes = [
         path:'/layer_review',
         component: () => import('components/layer_review'),
       },
-      {
-        path:'/user_manage',
-        component: () => import('components/user_manage'),
-      },
+      // {
+      //   path:'/user_manage',
+      //   component: () => import('components/user_manage'),
+      // },
     ],
   },
 ]

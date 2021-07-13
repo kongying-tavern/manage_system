@@ -221,26 +221,37 @@ export default {
   watch: {
     region_select_val: function(val) {
       this.itemtype_select_options = [];
-      this.itemtype_select_val = "";
-      for (let i in this.selectors_options[val].types) {
-        this.itemtype_select_options.push({
-          label: this.selectors_options[val].types[i].name,
-          value: Number(i)
-        });
+      this.itemtype_select_val = null;
+      if (val != -1) {
+        for (let i in this.selectors_options[val].types) {
+          this.itemtype_select_options.push({
+            label: this.selectors_options[val].types[i].name,
+            value: Number(i)
+          });
+        }
       }
     },
     itemtype_select_val: function(val) {
       this.item_select_options = [];
-      if (this.itemtype_select_val != "") {
+      if (val != null) {
         for (let i in this.selectors_options[this.region_select_val].types[val]
           .items) {
           this.item_select_options.push({
             label: this.selectors_options[this.region_select_val].types[val]
               .items[i].name,
-            value: Number(i)
+            value: Number(
+              this.selectors_options[this.region_select_val].types[val].items[i]
+                .id
+            )
           });
         }
       }
+    },
+    item_select_val: function(val) {
+      console.log(val);
+      marker_select(val).then(function(res) {
+        console.log(res);
+      });
     }
   },
   mounted() {
@@ -254,6 +265,10 @@ export default {
           value: Number(i)
         });
       }
+      that.region_select_options.push({
+        label: "全选",
+        value: -1
+      });
       that.selector_loading = false;
     });
   }

@@ -73,7 +73,7 @@ module.exports = function (/* ctx */) {
     },
     //模板页变量
     htmlVariables: {
-      title: '原神地图后台管理系统',
+      title: '原神点位管理系统',
       some: {
         prop: 'my-prop'
       }

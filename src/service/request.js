@@ -11,4 +11,4 @@ function options_type_select() {
         headers: { ts: ts, sign: sign }
     });
 }
-export {options_type_select}
+export {options_type_select} 
